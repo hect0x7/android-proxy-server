@@ -1,0 +1,41 @@
+[versions]
+minSdk = "26"
+targetSdk = "36"
+compileSdk = "36"
+
+agp = "9.3.0"
+kotlin = "2.4.10"
+coroutines = "1.11.0"
+
+core = "1.17.0"
+activity = "1.13.0"
+compose = "1.11.4"
+composeMaterial3 = "1.4.0"
+
+netty = "4.2.16.Final"
+slf4j = "2.0.18"
+
+junit = "4.13.2"
+
+[plugins]
+android = { id = "com.android.library", version.ref = "agp" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
+[libraries]
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
+androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
+
+compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "compose" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
+compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
+
+kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+
+netty-codec-http = { group = "io.netty", name = "netty-codec-http", version.ref = "netty" }
+netty-codec-socks = { group = "io.netty", name = "netty-codec-socks", version.ref = "netty" }
+slf4j-nop = { group = "org.slf4j", name = "slf4j-nop", version.ref = "slf4j" }
+
+junit = { group = "junit", name = "junit", version.ref = "junit" }

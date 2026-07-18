@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Proxy Server</string>
+    <string name="notification_channel_name">Proxy service</string>
+    <string name="notification_title">Proxy Server is running</string>
+</resources>
