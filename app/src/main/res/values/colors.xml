@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="proxy_teal">#008577</color>
+    <color name="proxy_teal_dark">#00695C</color>
+    <color name="proxy_surface_light">#F7F9F9</color>
+    <color name="proxy_surface_dark">#15191A</color>
+    <color name="launcher_background">#003731</color>
+</resources>

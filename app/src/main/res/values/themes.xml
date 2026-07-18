@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Proxy" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/proxy_teal_dark</item>
+        <item name="android:navigationBarColor">@color/proxy_surface_light</item>
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+</resources>
