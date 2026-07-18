@@ -7,7 +7,7 @@ agp = "9.3.0"
 kotlin = "2.4.10"
 coroutines = "1.11.0"
 
-core = "1.17.0"
+core = "1.19.0"
 activity = "1.13.0"
 compose = "1.11.4"
 composeMaterial3 = "1.4.0"
