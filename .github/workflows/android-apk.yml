@@ -62,10 +62,12 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
+          apksigner="$ANDROID_HOME/build-tools/36.0.0/apksigner"
           release_apk="$(find app/build/outputs/apk/release -name '*.apk' -print -quit)"
+          test -x "$apksigner"
           test -n "$release_apk"
-          apksigner verify --verbose --print-certs "$release_apk"
-          apk_sha="$(apksigner verify --print-certs "$release_apk" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p')"
+          "$apksigner" verify --verbose --print-certs "$release_apk"
+          apk_sha="$("$apksigner" verify --print-certs "$release_apk" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p')"
           key_sha="$(keytool -list -v -keystore "$ANDROID_KEYSTORE_PATH" -storepass "$ANDROID_KEYSTORE_PASSWORD" -alias "$ANDROID_KEY_ALIAS" | sed -n 's/.*SHA256: //p' | tr -d ':')"
           test "${apk_sha,,}" = "${key_sha,,}"
 
