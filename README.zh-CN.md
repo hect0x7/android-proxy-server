@@ -45,7 +45,14 @@
 
 ## 构建与发布
 
-推送到 `master` 后，GitHub Actions 会运行测试并构建 APK。Release 使用仓库 Actions Secrets 中保存的固定签名证书；工作流会在上传产物前验证 APK 签名，并确认 APK 证书与配置的发布 keystore 一致。
+推送到 `master` 后，GitHub Actions 会运行测试，并把 Debug/Release APK 上传为临时 Artifact。推送与 `versionName` 完全一致的 `v*` 标签后，工作流会创建或更新 GitHub Release，并附加已签名的 Release APK。
+
+Release 使用仓库 Actions Secrets 中保存的固定签名证书。发布前，工作流会验证 APK 签名，并确认 APK 证书与配置的发布 keystore 一致。
+
+```text
+git tag -a v1.1.0 -m "Android Proxy Server v1.1.0"
+git push origin v1.1.0
+```
 
 本地构建命令：
 

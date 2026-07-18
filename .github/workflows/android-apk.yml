@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    tags:
+      - "v*"
   pull_request:
   workflow_dispatch:
 
@@ -57,6 +59,7 @@ jobs:
         run: ./gradlew :proxycore:testDebugUnitTest :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease --stacktrace
 
       - name: Verify release APK signature
+        if: github.event_name != 'pull_request'
         env:
           ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/release.keystore
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -86,3 +89,53 @@ jobs:
             app/build/reports/dependencies-debug-runtime.txt
           if-no-files-found: error
           retention-days: 14
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: android-proxy-server-apks
+          path: release-assets
+
+      - name: Validate release version
+        id: version
+        run: |
+          version_name="$(sed -n 's/^[[:space:]]*versionName = "\([^"]*\)"/\1/p' app/build.gradle.kts)"
+          test -n "$version_name"
+          test "v$version_name" = "$GITHUB_REF_NAME"
+          echo "version_name=$version_name" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare release APK
+        id: asset
+        env:
+          VERSION_NAME: ${{ steps.version.outputs.version_name }}
+        run: |
+          source_apk="$(find release-assets -name '*release*.apk' -print -quit)"
+          test -n "$source_apk"
+          release_apk="android-proxy-server-$VERSION_NAME-release.apk"
+          cp "$source_apk" "$release_apk"
+          echo "path=$release_apk" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_APK: ${{ steps.asset.outputs.path }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "$RELEASE_APK" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "$RELEASE_APK" \
+              --verify-tag \
+              --title "Android Proxy Server $GITHUB_REF_NAME" \
+              --generate-notes
+          fi

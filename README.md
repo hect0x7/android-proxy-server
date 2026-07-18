@@ -45,7 +45,14 @@ This app does not use Android `VpnService` and does not create a VPN interface. 
 
 ## Build And Release
 
-Pushing to `master` runs the GitHub Actions test and APK workflow. Release builds use a fixed signing certificate stored in repository Actions Secrets. The workflow verifies the APK signature and confirms that its certificate matches the configured release keystore before uploading artifacts.
+Pushing to `master` runs tests and uploads Debug/Release APKs as temporary GitHub Actions artifacts. Pushing a `v*` tag that exactly matches `versionName` creates or updates a GitHub Release and attaches the signed Release APK.
+
+Release builds use a fixed signing certificate stored in repository Actions Secrets. Before publication, the workflow verifies the APK signature and confirms that its certificate matches the configured release keystore.
+
+```text
+git tag -a v1.1.0 -m "Android Proxy Server v1.1.0"
+git push origin v1.1.0
+```
 
 Local build command:
 
