@@ -18,6 +18,19 @@ An independent, minimal, open-source, and ad-free HTTP/SOCKS5 proxy server for A
 - Runs as a user-controlled foreground service
 - Displays local connection counts, traffic statistics, and in-memory session logs
 
+## Quick Start
+
+Connect the Android phone and client devices to the same trusted LAN, start HTTP and/or SOCKS5 in the app, then enter the phone's LAN IP and the displayed port in the client proxy settings.
+
+```text
+Client device        Home router          Android phone             Internet
+192.168.1.x   <---->  Same Wi-Fi/LAN  <---->  Proxy server  <---->  VPN/default route
+                                               8080 HTTP
+                                               1080 SOCKS5
+```
+
+See the illustrated [Getting Started Guide](docs/GETTING_STARTED.md) for protocol selection, setup examples, and troubleshooting.
+
 ## Privacy And Security
 
 The app contains no advertising, analytics, telemetry, crash reporting, accounts, purchases, rating prompts, remote configuration, or automatic-update SDKs. Settings remain in Android private app storage, while traffic statistics and session logs remain in memory and are cleared when the service stops.
