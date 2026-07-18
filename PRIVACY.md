@@ -1,26 +1,30 @@
-# 隐私说明
+# Privacy Policy
 
-本应用只提供用户主动启用的本机 HTTP 与 SOCKS5 代理服务。
+English | [简体中文](PRIVACY.zh-CN.md)
 
-## 不收集的数据
+Android Proxy Server provides only the local HTTP and SOCKS5 proxy services explicitly enabled by the user.
 
-应用不包含广告、分析、遥测、崩溃上报、远程配置、账号、内购、评分或自动更新 SDK，不收集设备标识、位置、联系人、浏览记录或代理流量内容，也不会把统计信息发送给开发者或第三方。
+## Data Not Collected
 
-## 本地数据
+The app contains no advertising, analytics, telemetry, crash reporting, remote configuration, accounts, in-app purchases, rating prompts, or automatic-update SDKs. It does not collect device identifiers, location, contacts, browsing history, proxy payloads, or traffic statistics, and it does not send data to the developer or third parties.
 
-HTTP/SOCKS 开关和端口保存在 Android 私有应用存储中。流量统计、连接计数和运行日志只保存在内存中，服务停止后清除。应用已禁用 Android 备份，避免配置进入云备份。
+## Local Data
 
-## 网络行为
+HTTP/SOCKS5 switches and port settings are stored in Android private app storage. Traffic statistics, connection counts, and session logs remain in memory and are cleared when the service stops. Android backup is disabled so app settings are not copied to cloud backup.
 
-启用代理后，客户端提交的网络请求会按代理协议转发到目标主机。这是代理功能本身必需的网络行为。应用不会额外复制、检查、持久化或上传代理内容。
+## Network Behavior
 
-## 权限
+When a proxy is enabled, the app forwards client requests to their requested destinations as required by the selected proxy protocol. The app does not independently copy, inspect, persist, or upload proxied content.
 
-- `INTERNET`：监听代理端口并建立出站连接。
-- `ACCESS_NETWORK_STATE`：显示可用的本机网络地址。
-- `FOREGROUND_SERVICE` 和 `FOREGROUND_SERVICE_SPECIAL_USE`：在用户启用代理后保持服务运行。
-- `POST_NOTIFICATIONS`：显示前台服务通知。
+## Permissions
 
-## 安全边界
+- `INTERNET`: listen on proxy ports and create outbound connections
+- `ACCESS_NETWORK_STATE`: display available local network addresses
+- `FOREGROUND_SERVICE` and `FOREGROUND_SERVICE_SPECIAL_USE`: keep a user-enabled proxy service running
+- `POST_NOTIFICATIONS`: display the foreground-service notification
 
-代理默认无身份验证并监听所有本机接口。用户应只在可信网络中启用，且不应通过路由器端口映射或防火墙规则把代理暴露到公网。
+## Security Boundary
+
+The proxy has no authentication and listens on all local interfaces. Use it only on trusted networks. Do not expose its ports through router port forwarding, public firewall rules, or untrusted hotspot networks.
+
+See the [Security Policy](SECURITY.md) for operational guidance and vulnerability reporting.
