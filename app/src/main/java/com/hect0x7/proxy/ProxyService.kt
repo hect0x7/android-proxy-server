@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,13 +25,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 class ProxyService : Service() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val controller = ProxyServerController()
-    private val reconcileMutex = Mutex()
+    private val settingsRequests = Channel<SettingsRequest>(Channel.CONFLATED)
+    private val requestLock = Any()
+    private var latestStartId = 0
     private var sessionLog = emptyList<String>()
 
     override fun onCreate() {
@@ -53,20 +54,25 @@ class ProxyService : Service() {
                         ?.let { appendLog("Error: $it") }
                 }
         }
+        scope.launch {
+            for (request in settingsRequests) reconcile(request)
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val settings = ProxyPreferences(this).read()
-        if (settings.httpEnabled || settings.socksEnabled) {
-            startForeground(NOTIFICATION_ID, buildNotification(settings))
+        startForeground(NOTIFICATION_ID, buildNotification(settings))
+        synchronized(requestLock) {
+            latestStartId = startId
+            settingsRequests.trySend(SettingsRequest(startId, settings))
         }
-        scope.launch { reconcile(settings) }
         return START_NOT_STICKY
     }
 
     override fun onDestroy() {
-        runBlocking(Dispatchers.IO) { controller.stop() }
+        settingsRequests.close()
         scope.cancel()
+        runBlocking(Dispatchers.IO) { controller.stop() }
         mutableRuntime.value = mutableRuntime.value.copy(
             running = false,
             httpRunning = false,
@@ -79,15 +85,18 @@ class ProxyService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    private suspend fun reconcile(settings: ProxySettings) = reconcileMutex.withLock {
+    private suspend fun reconcile(request: SettingsRequest) {
+        val settings = request.settings
         if (!settings.httpEnabled && !settings.socksEnabled) {
             if (controller.config.value != null) {
                 controller.stop()
                 appendLog("Proxy listeners stopped")
             }
-            stopForeground(STOP_FOREGROUND_REMOVE)
-            stopSelf()
-            return@withLock
+            val stopped = synchronized(requestLock) {
+                request.startId == latestStartId && stopSelfResult(request.startId)
+            }
+            if (stopped) stopForeground(STOP_FOREGROUND_REMOVE)
+            return
         }
 
         val config = ProxyConfig(
@@ -133,7 +142,7 @@ class ProxyService : Service() {
         val details = buildList {
             if (settings.httpEnabled) add("HTTP ${settings.httpPort}")
             if (settings.socksEnabled) add("SOCKS ${settings.socksPort}")
-        }.joinToString("  |  ")
+        }.joinToString("  |  ").ifEmpty { "Stopping proxy listeners" }
         val openApp = PendingIntent.getActivity(
             this,
             0,
@@ -158,12 +167,13 @@ class ProxyService : Service() {
         private val mutableRuntime = MutableStateFlow(RuntimeSnapshot())
         val runtime: StateFlow<RuntimeSnapshot> = mutableRuntime.asStateFlow()
 
-        fun applySettings(context: Context, settings: ProxySettings) {
-            if (settings.httpEnabled || settings.socksEnabled) {
-                ContextCompat.startForegroundService(context, Intent(context, ProxyService::class.java))
-            } else {
-                context.stopService(Intent(context, ProxyService::class.java))
-            }
+        fun applySettings(context: Context) {
+            ContextCompat.startForegroundService(context, Intent(context, ProxyService::class.java))
         }
     }
 }
+
+private data class SettingsRequest(
+    val startId: Int,
+    val settings: ProxySettings,
+)

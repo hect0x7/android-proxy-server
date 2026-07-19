@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         requestRuntimePermissions()
 
         if (settings.httpEnabled || settings.socksEnabled) {
-            ProxyService.applySettings(this, settings)
+            ProxyService.applySettings(this)
         }
 
         setContent {
@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
         if (updated == settings) return
         settings = updated
         preferences.write(updated)
-        ProxyService.applySettings(this, updated)
+        ProxyService.applySettings(this)
     }
 
     private fun requestRuntimePermissions() {
