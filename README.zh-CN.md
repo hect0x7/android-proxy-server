@@ -50,8 +50,8 @@
 Release 使用仓库 Actions Secrets 中保存的固定签名证书。发布前，工作流会验证 APK 签名，并确认 APK 证书与配置的发布 keystore 一致。
 
 ```text
-git tag -a v1.1.0 -m "Android Proxy Server v1.1.0"
-git push origin v1.1.0
+git tag -a v1.1.1 -m "Android Proxy Server v1.1.1"
+git push origin v1.1.1
 ```
 
 本地构建命令：

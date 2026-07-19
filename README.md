@@ -50,8 +50,8 @@ Pushing to `master` runs tests and uploads Debug/Release APKs as temporary GitHu
 Release builds use a fixed signing certificate stored in repository Actions Secrets. Before publication, the workflow verifies the APK signature and confirms that its certificate matches the configured release keystore.
 
 ```text
-git tag -a v1.1.0 -m "Android Proxy Server v1.1.0"
-git push origin v1.1.0
+git tag -a v1.1.1 -m "Android Proxy Server v1.1.1"
+git push origin v1.1.1
 ```
 
 Local build command:
