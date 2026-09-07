@@ -13,7 +13,7 @@ compose = "1.11.4"
 composeMaterial3 = "1.4.0"
 
 netty = "4.2.16.Final"
-slf4j = "2.0.18"
+slf4j = "2.0.19"
 
 junit = "4.13.2"
 
