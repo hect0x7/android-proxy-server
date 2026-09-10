@@ -4,7 +4,7 @@ targetSdk = "36"
 compileSdk = "36"
 
 agp = "9.3.1"
-kotlin = "2.4.10"
+kotlin = "2.4.20"
 coroutines = "1.11.0"
 
 core = "1.17.0"
